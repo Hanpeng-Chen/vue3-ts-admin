@@ -7,7 +7,6 @@
         <div class="tags-view">tags view</div>
       </div>
       <div class="app-main">
-        <h2>app main title</h2>
         <router-view></router-view>
       </div>
     </div>
@@ -36,7 +35,7 @@
     }
     .app-main {
       min-height: calc(100vh - 84px);
-      background: red;
+      background: #FFF;
     }
   }
 }
