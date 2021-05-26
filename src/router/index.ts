@@ -4,7 +4,6 @@ import Layout from '@/layout/index.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Layout',
     component: Layout,
     redirect: '/dashboard',
     children: [

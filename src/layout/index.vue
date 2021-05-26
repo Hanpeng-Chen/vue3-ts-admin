@@ -1,6 +1,8 @@
 <template>
   <div class="app-wrapper">
-    <div class="sidebar-container">sidebar</div>
+    <div class="sidebar-container">
+      <sidebar />
+    </div>
     <div class="main-container">
       <div class="header">
         <div class="navbar">navbar</div>
@@ -12,6 +14,17 @@
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Sidebar from '@/components/Sidebar/index.vue'
+
+export default defineComponent({
+  components: {
+    Sidebar
+  }
+})
+</script>
 
 <style lang="scss" scoped>
 .app-wrapper {

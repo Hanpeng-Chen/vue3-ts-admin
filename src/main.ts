@@ -7,6 +7,8 @@ import installElementPlus from './plugins/element'
 import '@/styles/index.scss'
 import initSvgIcon from '@/icons/index'
 
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+
 const app = createApp(App)
 
 app.use(store)
@@ -14,3 +16,13 @@ app.use(store)
   .use(installElementPlus)
   .use(initSvgIcon)
   .mount('#app')
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $message: typeof ElMessage;
+    $notify: typeof ElNotification;
+    $alert: typeof ElMessageBox.alert;
+    $confirm: typeof ElMessageBox.confirm;
+    $prompt: typeof ElMessageBox.prompt;
+  }
+}

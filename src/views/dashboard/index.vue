@@ -2,11 +2,22 @@
   <div>
     <h1>dashboard page</h1>
     <svg-icon icon-class="bug"></svg-icon>
+    <el-button @click="handleClick">按钮</el-button>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Dashboard'
-}
+<script lang="ts">
+import { defineComponent, getCurrentInstance } from 'vue'
+export default defineComponent({
+  name: 'Dashboard',
+  setup() {
+    const { proxy } = getCurrentInstance()!
+    const handleClick = () => {
+      proxy?.$message.success('success message')
+    }
+    return {
+      handleClick
+    }
+  }
+})
 </script>
