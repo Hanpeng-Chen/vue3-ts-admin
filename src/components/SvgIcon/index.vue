@@ -30,7 +30,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    console.log('setup...............', props)
     // 是否是带协议的图片链接
     const isExt = computed(() => isExternal(props.iconClass || ''))
     // 拼接成symbolId

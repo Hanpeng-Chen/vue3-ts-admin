@@ -5,7 +5,7 @@
     </div>
     <div class="main-container">
       <div class="header">
-        <div class="navbar">navbar</div>
+        <navbar></navbar>
         <div class="tags-view">tags view</div>
       </div>
       <div class="app-main">
@@ -17,11 +17,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Sidebar from '@/components/Sidebar/index.vue'
+import Sidebar from './components/Sidebar/index.vue'
+import Navbar from './components/Navbar.vue'
 
 export default defineComponent({
   components: {
-    Sidebar
+    Sidebar,
+    Navbar
   }
 })
 </script>
@@ -36,14 +38,14 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     .header {
-      background: gray;
       .navbar {
         height: 50px;
-        background: #1890ff;
+        position: relative;
+        background: #FFF;
+        box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
       }
       .tags-view {
         height: 34px;
-        background: #12efff;
       }
     }
     .app-main {
