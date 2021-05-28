@@ -1,18 +1,21 @@
 <template>
   <div class="navbar">
     <hamburger @toggleClick="toggleSidebar" :is-active="sidebar.opened"></hamburger>
+    <breadcrumb></breadcrumb>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import Hamburger from '@/components/Hamburger/index.vue'
+import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import { useStore } from '@/store/index'
 
 export default defineComponent({
   name: 'Navbar',
   components: {
-    Hamburger
+    Hamburger,
+    Breadcrumb
   },
   setup() {
     const store = useStore()

@@ -22,6 +22,11 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
+    meta: {
+      title: 'Guide',
+      icon: 'lock',
+      alwaysShow: false
+    },
     children: [
       {
         path: 'index',
@@ -30,6 +35,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: 'Guide',
           icon: 'guide'
+          // activeMenu: '/documentation/index'
         }
       }
     ]
@@ -82,7 +88,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         redirect: '/',
         meta: {
           title: 'External link',
-          icon: 'link'
+          icon: 'link',
+          hidden: false
         }
       }
     ]

@@ -38,7 +38,10 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
     const activeMenu = computed(() => {
-      const { path } = route
+      const { path, meta } = route
+      if (meta.activeMenu) {
+        return meta.activeMenu
+      }
       return path
     })
     const scssVariables = computed(() => variables)
