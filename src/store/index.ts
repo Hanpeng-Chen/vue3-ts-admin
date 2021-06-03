@@ -3,9 +3,11 @@ import app, { IAppState } from '@/store/modules/app'
 import createPersistedState from 'vuex-persistedstate'
 import getters from './getters'
 import { InjectionKey } from 'vue'
+import tagsView, { ITagsViewState } from '@/store/modules/tagsView'
 
 export interface IRootState {
-  app: IAppState
+  app: IAppState,
+  tagsView: ITagsViewState
 }
 
 // eslint-disable-next-line symbol-description
@@ -24,7 +26,8 @@ export default createStore({
   ],
   getters,
   modules: {
-    app
+    app,
+    tagsView
   }
 })
 
