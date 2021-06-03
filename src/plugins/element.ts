@@ -9,7 +9,8 @@ import {
   ElMenuItem,
   ElSubmenu,
   ElBreadcrumb,
-  ElBreadcrumbItem
+  ElBreadcrumbItem,
+  ElScrollbar
 } from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
@@ -32,7 +33,8 @@ export default (app: App): void => {
     ElMenuItem,
     ElSubmenu,
     ElBreadcrumb,
-    ElBreadcrumbItem
+    ElBreadcrumbItem,
+    ElScrollbar
   ]
 
   components.forEach(component => {

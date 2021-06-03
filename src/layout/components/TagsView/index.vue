@@ -1,23 +1,26 @@
 <template>
   <div class="tags-view-container">
-    <div class="tags-view-wrapper">
-      <router-link
-        class="tags-view-item"
-        :class="{
-          active: isActive(tag)
-        }"
-        v-for="(tag, index) in visitedViews"
-        :key="index"
-        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
-      >
-        {{ tag.meta.title }}
-        <span
-          class="el-icon-close"
-          @click.prevent.stop="closeSelectedTag(tag)"
-        ></span>
-      </router-link>
-    </div>
+    <scroll-panel>
+      <div class="tags-view-wrapper">
+        <router-link
+          class="tags-view-item"
+          :class="{
+            active: isActive(tag)
+          }"
+          v-for="(tag, index) in visitedViews"
+          :key="index"
+          :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+          tag="span"
+        >
+          {{ tag.meta.title }}
+          <span
+            v-if="!isAffix(tag)"
+            class="el-icon-close"
+            @click.prevent.stop="closeSelectedTag(tag)"
+          ></span>
+        </router-link>
+      </div>
+    </scroll-panel>
   </div>
 </template>
 
@@ -26,17 +29,60 @@ import { useStore } from '@/store'
 import { RouteLocationWithFullPath } from '@/store/modules/tagsView'
 import { computed, defineComponent, onMounted, watch } from 'vue'
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
+import path from 'path'
+import { routes } from '@/router'
+import ScrollPanel from '@/components/ScrollPanel.vue'
 
 export default defineComponent({
   name: 'TagsView',
+  components: {
+    ScrollPanel
+  },
   setup() {
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
 
     const visitedViews = computed(() => store.state.tagsView.visitedViews)
+
+    // 过滤出要固定的tags
+    const filterAffixTags = (routes: Array<RouteLocationWithFullPath | RouteRecordRaw>, basePath = '/') => {
+      let tags: RouteLocationWithFullPath[] = []
+      routes.forEach(route => {
+        if (route.meta && route.meta.affix) {
+          // 把路由路径解析成完整路径
+          const tagPath = path.resolve(basePath, route.path)
+          tags.push({
+            name: route.name,
+            path: tagPath,
+            fullPath: tagPath,
+            meta: { ...route.meta }
+          } as RouteLocationWithFullPath)
+        }
+
+        // 深度优先遍历子路由
+        if (route.children) {
+          const childTags = filterAffixTags(route.children, route.path)
+          if (childTags.length) {
+            tags = [...tags, ...childTags]
+          }
+        }
+      })
+      return tags
+    }
+
+    const initTags = () => {
+      const affixTags = filterAffixTags(routes)
+      for (const tag of affixTags) {
+        if (tag.name) {
+          console.log('tag', tag)
+          store.dispatch('tagsView/addVisitedView', tag)
+        }
+      }
+    }
     const addTag = () => {
       const { name } = route
+      console.log('route', route, route.name)
       if (name) {
         store.dispatch('tagsView/addView', route)
       }
@@ -47,6 +93,7 @@ export default defineComponent({
     })
 
     onMounted(() => {
+      initTags()
       addTag()
     })
 
@@ -76,9 +123,14 @@ export default defineComponent({
       })
     }
 
+    const isAffix = (tag: RouteLocationWithFullPath) => {
+      return tag.meta && tag.meta.affix
+    }
+
     return {
       visitedViews,
       isActive,
+      isAffix,
       closeSelectedTag
     }
   }
@@ -87,11 +139,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .tags-view-container {
-  width: 100%;
   height: 34px;
   background: #FFF;
   border-bottom: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+  overflow: hidden;
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;

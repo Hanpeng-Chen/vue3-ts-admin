@@ -39,18 +39,9 @@ export default defineComponent({
     flex: 1;
     display: flex;
     flex-direction: column;
-    .header {
-      .navbar {
-        height: 50px;
-        position: relative;
-        background: #FFF;
-        border-bottom: 1px solid rgb(0 21 41 / 8%);
-        box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
-      }
-    }
+    overflow: hidden;
     .app-main {
       min-height: calc(100vh - 84px);
-      background: #FFF;
     }
   }
 }

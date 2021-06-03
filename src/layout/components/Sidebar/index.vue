@@ -1,23 +1,25 @@
 <template>
   <div>
-    <el-menu
-      class="sidebar-container-menu"
-      mode="vertical"
-      :default-active="activeMenu"
-      :background-color="scssVariables.menuBg"
-      :text-color="scssVariables.menuText"
-      :active-text-color="scssVariables.menuActiveText"
-      :collapse="isCollapse"
-      :collapse-transition="true"
-    >
-      <sidebar-item
-        v-for="route in menuRoutes"
-        :key="route.path"
-        :item="route"
-        :base-path="route.path"
+    <scroll-panel>
+      <el-menu
+        class="sidebar-container-menu"
+        mode="vertical"
+        :default-active="activeMenu"
+        :background-color="scssVariables.menuBg"
+        :text-color="scssVariables.menuText"
+        :active-text-color="scssVariables.menuActiveText"
+        :collapse="isCollapse"
+        :collapse-transition="true"
       >
-      </sidebar-item>
-    </el-menu>
+        <sidebar-item
+          v-for="route in menuRoutes"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+        >
+        </sidebar-item>
+      </el-menu>
+    </scroll-panel>
   </div>
 </template>
 
@@ -28,11 +30,13 @@ import variables from '@/styles/variables.scss'
 import { useRoute } from 'vue-router'
 import { routes } from '@/router'
 import { useStore } from '@/store'
+import ScrollPanel from '@/components/ScrollPanel.vue'
 
 export default defineComponent({
   name: 'Sidebar',
   components: {
-    SidebarItem
+    SidebarItem,
+    ScrollPanel
   },
   setup() {
     const route = useRoute()
