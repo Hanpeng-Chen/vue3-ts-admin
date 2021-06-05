@@ -12,12 +12,27 @@
           :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
           tag="span"
         >
-          {{ tag.meta.title }}
-          <span
-            v-if="!isAffix(tag)"
-            class="el-icon-close"
-            @click.prevent.stop="closeSelectedTag(tag)"
-          ></span>
+          <el-dropdown
+            trigger="contextmenu"
+            @command="command => handleTagCommand(command, tag)"
+          >
+            <span>
+              {{ tag.meta.title }}
+              <span
+                v-if="!isAffix(tag)"
+                class="el-icon-close"
+                @click.prevent.stop="closeSelectedTag(tag)"
+              ></span>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="refresh">刷新</el-dropdown-item>
+                <el-dropdown-item command="all">关闭所有</el-dropdown-item>
+                <el-dropdown-item command="other">关闭其他</el-dropdown-item>
+                <el-dropdown-item command="self">关闭</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </router-link>
       </div>
     </scroll-panel>
@@ -27,11 +42,18 @@
 <script lang="ts">
 import { useStore } from '@/store'
 import { RouteLocationWithFullPath } from '@/store/modules/tagsView'
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, watch } from 'vue'
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import path from 'path'
 import { routes } from '@/router'
 import ScrollPanel from '@/components/ScrollPanel.vue'
+
+enum TagCommandType {
+  ALL = 'all',
+  Other = 'other',
+  Self = 'self',
+  Refresh = 'refresh'
+}
 
 export default defineComponent({
   name: 'TagsView',
@@ -121,6 +143,46 @@ export default defineComponent({
       })
     }
 
+    const handleTagCommand = (command: TagCommandType, view: RouteLocationWithFullPath) => {
+      switch (command) {
+        case TagCommandType.Refresh:
+          refreshSelectedTag(view)
+          break
+        case TagCommandType.ALL:
+          handleCloseAllTag(view)
+          break
+        case TagCommandType.Other:
+          handleCloseOtherTag(view)
+          break
+        case TagCommandType.Self:
+          closeSelectedTag(view)
+          break
+      }
+    }
+
+    const refreshSelectedTag = (view: RouteLocationWithFullPath) => {
+      store.dispatch('tagsView/delCachedView', view).then(() => {
+        const { fullPath } = route
+        nextTick(() => {
+          router.replace('/redirect' + fullPath)
+        })
+      })
+    }
+
+    const handleCloseAllTag = (view: RouteLocationWithFullPath) => {
+      store.dispatch('tagsView/delAllViews').then(() => {
+        toLastView(visitedViews.value, view)
+      })
+    }
+
+    const handleCloseOtherTag = (view: RouteLocationWithFullPath) => {
+      store.dispatch('tagsView/delOtherViews', view).then(() => {
+        if (!isActive(view)) {
+          router.push(view.path)
+        }
+      })
+    }
+
     const isAffix = (tag: RouteLocationWithFullPath) => {
       return tag.meta && tag.meta.affix
     }
@@ -129,7 +191,8 @@ export default defineComponent({
       visitedViews,
       isActive,
       isAffix,
-      closeSelectedTag
+      closeSelectedTag,
+      handleTagCommand
     }
   }
 })
@@ -165,6 +228,11 @@ export default defineComponent({
         background-color: #42b983;
         color: #FFF;
         border-color: #42b983;
+        ::v-deep {
+          .el-dropdown {
+            color: #FFF;
+          }
+        }
         &::before {
           position: relative;
           display: inline-block;

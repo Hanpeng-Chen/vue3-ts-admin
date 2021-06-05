@@ -13,7 +13,8 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "documentation" */ '@/views/documentation/index.vue'),
         meta: {
           title: 'Documentation',
-          icon: 'documentation'
+          icon: 'documentation',
+          noCache: true
         }
       }
     ]

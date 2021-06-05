@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>documentation page</h1>
+    <input type="text">
   </div>
 </template>
 

@@ -44,6 +44,7 @@ export default defineComponent({
     ])
 
     const refreshView = () => {
+      store.dispatch('tagsView/delAllCachedViews')
       const { fullPath } = route
       nextTick(() => {
         router.replace({
