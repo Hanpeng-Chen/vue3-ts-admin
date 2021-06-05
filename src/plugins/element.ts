@@ -10,7 +10,11 @@ import {
   ElSubmenu,
   ElBreadcrumb,
   ElBreadcrumbItem,
-  ElScrollbar
+  ElScrollbar,
+  ElTooltip,
+  ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem
 } from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
@@ -18,9 +22,13 @@ import lang from 'element-plus/lib/locale/lang/zh-cn'
 import 'dayjs/locale/zh-cn'
 
 // size属性类型
-export type size = 'default' | 'medium' | 'small' | 'mini'
+export type Size = 'default' | 'medium' | 'small' | 'mini'
 
-export default (app: App): void => {
+interface ElementOptions {
+  size: Size
+}
+
+export default (app: App, options: ElementOptions): void => {
   locale(lang)
 
   // 按需导入组件列表
@@ -34,7 +42,11 @@ export default (app: App): void => {
     ElSubmenu,
     ElBreadcrumb,
     ElBreadcrumbItem,
-    ElScrollbar
+    ElScrollbar,
+    ElTooltip,
+    ElDropdown,
+    ElDropdownMenu,
+    ElDropdownItem
   ]
 
   components.forEach(component => {
@@ -48,6 +60,6 @@ export default (app: App): void => {
   app.config.globalProperties.$prompt = ElMessageBox.prompt
 
   app.config.globalProperties.$ELEMENT = {
-    size: 'medium'
+    size: options.size
   }
 }

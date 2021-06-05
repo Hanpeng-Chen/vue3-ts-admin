@@ -17,7 +17,7 @@ export const key: InjectionKey<Store<IRootState>> = Symbol()
 const persisteAppState = createPersistedState({
   storage: window.sessionStorage,
   key: 'vuex_app',
-  paths: ['app.sidebar.opened'] // 只针对app模块下的sidebar.opened状态持久化
+  paths: ['app.sidebar.opened', 'app.size'] // 只针对app模块下的sidebar.opened状态持久化
 })
 
 export default createStore({

@@ -2,20 +2,33 @@
   <div class="navbar">
     <hamburger @toggleClick="toggleSidebar" :is-active="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
+    <div class="right-menu">
+      <screen-full id="screenfull" class="right-menu-item hover-effect"></screen-full>
+      <el-tooltip content="Global Size" effect="dark" placement="bottom">
+        <size-select class="right-menu-item hover-effect"></size-select>
+      </el-tooltip>
+      <avatar />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
+import { useStore } from '@/store/index'
 import Hamburger from '@/components/Hamburger/index.vue'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
-import { useStore } from '@/store/index'
+import ScreenFull from '@/components/Screenfull/index.vue'
+import SizeSelect from '@/components/SizeSelect/index.vue'
+import Avatar from './Avatar/index.vue'
 
 export default defineComponent({
   name: 'Navbar',
   components: {
     Hamburger,
-    Breadcrumb
+    Breadcrumb,
+    ScreenFull,
+    SizeSelect,
+    Avatar
   },
   setup() {
     const store = useStore()
@@ -33,9 +46,31 @@ export default defineComponent({
 
 <style lang="scss">
 .navbar {
+  display: flex;
   height: 50px;
   background: #FFF;
   border-bottom: 1px solid rgb(0 21 41 / 8%);
   box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+  .right-menu {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+    &-item {
+      padding: 0 8px;
+      font-size: 18px;
+      color: #5a5e66;
+      vertical-align: text-bottom;
+      &.hover-effect {
+        cursor: pointer;
+        transition: background .3s;
+
+        &:hover {
+          background: rgba(0, 0, 0, .025)
+        }
+      }
+    }
+  }
 }
 </style>

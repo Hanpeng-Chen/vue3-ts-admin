@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store, { key } from './store'
 import 'normalize.css/normalize.css'
-import installElementPlus from './plugins/element'
+import installElementPlus, { Size } from './plugins/element'
 import '@/styles/index.scss'
 import initSvgIcon from '@/icons/index'
 
@@ -11,9 +11,13 @@ import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 
 const app = createApp(App)
 
+const size = store.getters.size
+
 app.use(store, key)
   .use(router)
-  .use(installElementPlus)
+  .use(installElementPlus, {
+    size
+  })
   .use(initSvgIcon)
   .mount('#app')
 
@@ -24,5 +28,8 @@ declare module '@vue/runtime-core' {
     $alert: typeof ElMessageBox.alert;
     $confirm: typeof ElMessageBox.confirm;
     $prompt: typeof ElMessageBox.prompt;
+    $ELEMENT: {
+      size: Size
+    }
   }
 }

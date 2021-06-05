@@ -75,14 +75,12 @@ export default defineComponent({
       const affixTags = filterAffixTags(routes)
       for (const tag of affixTags) {
         if (tag.name) {
-          console.log('tag', tag)
           store.dispatch('tagsView/addVisitedView', tag)
         }
       }
     }
     const addTag = () => {
       const { name } = route
-      console.log('route', route, route.name)
       if (name) {
         store.dispatch('tagsView/addView', route)
       }
