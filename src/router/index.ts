@@ -128,6 +128,11 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/redirect/index.vue')
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/login/index.vue')
   }
 ]
 

@@ -14,7 +14,10 @@ import {
   ElTooltip,
   ElDropdown,
   ElDropdownMenu,
-  ElDropdownItem
+  ElDropdownItem,
+  ElForm,
+  ElFormItem,
+  ElInput
 } from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
@@ -46,7 +49,10 @@ export default (app: App, options: ElementOptions): void => {
     ElTooltip,
     ElDropdown,
     ElDropdownMenu,
-    ElDropdownItem
+    ElDropdownItem,
+    ElForm,
+    ElFormItem,
+    ElInput
   ]
 
   components.forEach(component => {
