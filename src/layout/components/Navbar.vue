@@ -3,6 +3,10 @@
     <hamburger @toggleClick="toggleSidebar" :is-active="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
     <div class="right-menu">
+      <!-- 设置 -->
+      <div @click="openShowSetting" class="setting right-menu-item hover-effect">
+        <i class="el-icon-s-tools"></i>
+      </div>
       <screen-full id="screenfull" class="right-menu-item hover-effect"></screen-full>
       <el-tooltip content="Global Size" effect="dark" placement="bottom">
         <size-select class="right-menu-item hover-effect"></size-select>
@@ -30,15 +34,22 @@ export default defineComponent({
     SizeSelect,
     Avatar
   },
-  setup() {
+  emits: ['showSetting'],
+  setup(props, { emit }) {
     const store = useStore()
     const sidebar = computed(() => store.getters.sidebar)
     const toggleSidebar = () => {
       store.dispatch('app/toggleSidebar')
     }
+
+    // 打开设置面板
+    const openShowSetting = () => {
+      emit('showSetting', true)
+    }
     return {
       sidebar,
-      toggleSidebar
+      toggleSidebar,
+      openShowSetting
     }
   }
 })
@@ -57,6 +68,9 @@ export default defineComponent({
     align-items: center;
     justify-content: flex-end;
     padding-right: 15px;
+    .setting {
+      font-size: 26px;
+    }
     &-item {
       padding: 0 8px;
       font-size: 18px;
