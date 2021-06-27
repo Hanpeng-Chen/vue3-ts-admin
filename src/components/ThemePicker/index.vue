@@ -28,6 +28,11 @@ export default defineComponent({
       immediate: true
     })
 
+    watch(theme, (value) => {
+      store.dispatch('settings/changeSetting', { key: 'theme', value })
+      // generateTheme(value)
+    })
+
     return {
       themeColor,
       theme

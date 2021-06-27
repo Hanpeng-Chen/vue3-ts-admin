@@ -7,7 +7,7 @@
         :default-active="activeMenu"
         :background-color="scssVariables.menuBg"
         :text-color="scssVariables.menuText"
-        :active-text-color="scssVariables.menuActiveText"
+        :active-text-color="themeColor"
         :collapse="isCollapse"
         :collapse-transition="true"
       >
@@ -51,11 +51,14 @@ export default defineComponent({
     const scssVariables = computed(() => variables)
     const isCollapse = computed(() => !store.getters.sidebar.opened)
     const menuRoutes = computed(() => routes)
+
+    const themeColor = computed(() => store.getters.themeColor)
     return {
       scssVariables,
       isCollapse,
       activeMenu,
-      menuRoutes
+      menuRoutes,
+      themeColor
     }
   }
 })

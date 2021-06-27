@@ -4,10 +4,12 @@ import createPersistedState from 'vuex-persistedstate'
 import getters from './getters'
 import { InjectionKey } from 'vue'
 import tagsView, { ITagsViewState } from '@/store/modules/tagsView'
+import settings, { ISettingsState } from './modules/settings'
 
 export interface IRootState {
   app: IAppState,
-  tagsView: ITagsViewState
+  tagsView: ITagsViewState,
+  settings: ISettingsState
 }
 
 // eslint-disable-next-line symbol-description
@@ -20,14 +22,22 @@ const persisteAppState = createPersistedState({
   paths: ['app.sidebar.opened', 'app.size'] // 只针对app模块下的sidebar.opened状态持久化
 })
 
+const persisteSettingsState = createPersistedState({
+  storage: window.sessionStorage,
+  key: 'vuex_settings',
+  paths: ['settings.theme', 'settings.originStyle']
+})
+
 export default createStore({
   plugins: [
-    persisteAppState
+    persisteAppState,
+    persisteSettingsState
   ],
   getters,
   modules: {
     app,
-    tagsView
+    tagsView,
+    settings
   }
 })
 

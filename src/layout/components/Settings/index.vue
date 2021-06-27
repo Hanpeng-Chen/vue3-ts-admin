@@ -2,15 +2,21 @@
   <div class="drawer-container">
     <div class="drawer-item">
       <span>主题色</span>
+       <!-- 主题组件 -->
+      <theme-picker />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import ThemePicker from '@/components/ThemePicker/index.vue'
 
 export default defineComponent({
-  name: 'Settings'
+  name: 'Settings',
+  components: {
+    ThemePicker
+  }
 })
 </script>
 
