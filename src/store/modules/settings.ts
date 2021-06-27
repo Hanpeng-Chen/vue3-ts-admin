@@ -5,6 +5,8 @@ import { IRootState } from '../index'
 export interface ISettingsState {
   theme: string;
   originStyle: string;
+  tagsView: boolean;
+  sidebarLogo: boolean;
 }
 
 // 动态key的情况下，根据不同的key约束对应的value
@@ -32,7 +34,9 @@ const settings: Module<ISettingsState, IRootState> = {
   namespaced: true,
   state: {
     theme: variables.theme,
-    originStyle: '' // 保存element主题样式内容，作为替换模板
+    originStyle: '', // 保存element主题样式内容，作为替换模板
+    tagsView: true,
+    sidebarLogo: true
   },
   mutations,
   actions

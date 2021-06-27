@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="sidebar-wrapper">
+    <logo v-if="showLogo" :collapse="isCollapse"></logo>
     <scroll-panel>
       <el-menu
         class="sidebar-container-menu"
@@ -31,12 +32,14 @@ import { useRoute } from 'vue-router'
 import { routes } from '@/router'
 import { useStore } from '@/store'
 import ScrollPanel from '@/components/ScrollPanel.vue'
+import Logo from './Logo.vue'
 
 export default defineComponent({
   name: 'Sidebar',
   components: {
     SidebarItem,
-    ScrollPanel
+    ScrollPanel,
+    Logo
   },
   setup() {
     const route = useRoute()
@@ -53,13 +56,26 @@ export default defineComponent({
     const menuRoutes = computed(() => routes)
 
     const themeColor = computed(() => store.getters.themeColor)
+    const showLogo = computed(() => store.state.settings.sidebarLogo)
     return {
       scssVariables,
       isCollapse,
       activeMenu,
       menuRoutes,
-      themeColor
+      themeColor,
+      showLogo
     }
   }
 })
 </script>
+
+<style lang="scss" scoped>
+  .sidebar-wrapper {
+    .sidebar-container-menu {
+      height: 100vh;
+      &.sidebar-show-logo {
+        height: calc(100vh - 50px);
+      }
+    }
+  }
+</style>
