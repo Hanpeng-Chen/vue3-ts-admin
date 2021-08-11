@@ -57,11 +57,15 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, toRefs, onMounted } from 'vue'
 import { ElForm } from 'element-plus'
+import { useStore } from '@/store'
+import { useRouter } from 'vue-router'
 
 type IElFormInstance = InstanceType<typeof ElForm>
 export default defineComponent({
   name: 'Login',
   setup() {
+    const store = useStore()
+    const router = useRouter()
     const loading = ref(false) // 登录加载状态
     // form ref
     const loginFormRef = ref<IElFormInstance | null>(null)
@@ -103,6 +107,20 @@ export default defineComponent({
     // 登录
     const handleLogin = () => {
       console.log('login')
+      ;(loginFormRef.value as IElFormInstance).validate((valid) => {
+        if (valid) {
+          loading.value = true
+          store.dispatch('user/login', loginState.loginForm).then(() => {
+            router.push({
+              path: '/'
+            })
+          }).finally(() => {
+            loading.value = false
+          })
+        } else {
+          console.log('error submit')
+        }
+      })
     }
 
     // 自动获取焦点

@@ -5,9 +5,11 @@ import getters from './getters'
 import { InjectionKey } from 'vue'
 import tagsView, { ITagsViewState } from '@/store/modules/tagsView'
 import settings, { ISettingsState } from './modules/settings'
+import user, { IUserState } from './modules/user'
 
 export interface IRootState {
   app: IAppState,
+  user: IUserState,
   tagsView: ITagsViewState,
   settings: ISettingsState
 }
@@ -36,6 +38,7 @@ export default createStore({
   getters,
   modules: {
     app,
+    user,
     tagsView,
     settings
   }
