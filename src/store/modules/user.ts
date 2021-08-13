@@ -1,5 +1,5 @@
 import { login } from '@/api/user'
-import { setToken } from '@/utils/auth'
+import { removeToken, setToken } from '@/utils/auth'
 import { ActionTree, Module, MutationTree } from 'vuex'
 import { IRootState } from '..'
 
@@ -39,6 +39,14 @@ const actions: IActions = {
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+  logout({ commit, dispatch }) {
+    return new Promise<void>((resolve) => {
+      commit('SET_TOKEN', '')
+      removeToken()
+      dispatch('tagsView/delAllViews', null, { root: true })
+      resolve()
     })
   }
 }
