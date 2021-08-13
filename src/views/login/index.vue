@@ -59,6 +59,7 @@ import { defineComponent, ref, reactive, toRefs, onMounted } from 'vue'
 import { ElForm } from 'element-plus'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
+import useRouteQuery from './hooks/useRouteQuery'
 
 type IElFormInstance = InstanceType<typeof ElForm>
 export default defineComponent({
@@ -104,15 +105,16 @@ export default defineComponent({
     }
 
     // 重定向router query处理
+    const { redirect, otherQuery } = useRouteQuery()
     // 登录
     const handleLogin = () => {
-      console.log('login')
-      ;(loginFormRef.value as IElFormInstance).validate((valid) => {
+      (loginFormRef.value as IElFormInstance).validate((valid) => {
         if (valid) {
           loading.value = true
           store.dispatch('user/login', loginState.loginForm).then(() => {
             router.push({
-              path: '/'
+              path: redirect.value as string || '/',
+              query: otherQuery.value
             })
           }).finally(() => {
             loading.value = false
