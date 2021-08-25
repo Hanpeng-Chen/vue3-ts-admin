@@ -1,5 +1,6 @@
+import store from '@/store'
 import { getToken } from '@/utils/auth'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 
 const request = axios.create({
@@ -13,8 +14,14 @@ request.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
-}, error => {
-  console.log(error)
+}, (error: AxiosError) => {
+  const res = error?.response
+  if (res && res.status === 401) {
+    store.dispatch('user/resetToken').then(() => {
+      window.location.reload()
+    })
+  }
+  ElMessage.error(error.message)
   return Promise.reject(error)
 })
 

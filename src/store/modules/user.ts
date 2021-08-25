@@ -48,6 +48,13 @@ const actions: IActions = {
       dispatch('tagsView/delAllViews', null, { root: true })
       resolve()
     })
+  },
+  resetToken({ commit }) {
+    return new Promise<void>((resolve) => {
+      commit('SET_TOKEN', '')
+      removeToken()
+      resolve()
+    })
   }
 }
 

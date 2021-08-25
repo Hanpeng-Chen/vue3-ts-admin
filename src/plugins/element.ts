@@ -20,7 +20,10 @@ import {
   ElInput,
   ElDrawer,
   ElColorPicker,
-  ElSwitch
+  ElSwitch,
+  ElSelect,
+  ElTable,
+  ElTableColumn
 } from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
@@ -58,7 +61,10 @@ export default (app: App, options: ElementOptions): void => {
     ElInput,
     ElDrawer,
     ElColorPicker,
-    ElSwitch
+    ElSwitch,
+    ElSelect,
+    ElTable,
+    ElTableColumn
   ]
 
   components.forEach(component => {
