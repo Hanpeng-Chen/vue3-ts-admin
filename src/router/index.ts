@@ -12,7 +12,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'Documentation',
         component: () => import(/* webpackChunkName: "documentation" */ '@/views/documentation/index.vue'),
         meta: {
-          title: 'Documentation',
+          title: '文档',
           icon: 'documentation',
           noCache: true
         }
@@ -24,7 +24,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: '/guide/index',
     meta: {
-      title: 'Guide',
+      title: '引导',
       icon: 'lock',
       alwaysShow: false
     },
@@ -34,7 +34,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'Guide',
         component: () => import(/* webpackChunkName: "guide" */ '@/views/guide/index.vue'),
         meta: {
-          title: 'Guide',
+          title: '引导页',
           icon: 'guide'
           // activeMenu: '/documentation/index'
         }
@@ -46,7 +46,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: '/system/user',
     meta: {
-      title: 'System',
+      title: '系统权限',
       icon: 'lock',
       alwaysShow: true // 根路由始终显示 哪怕只有一个子路由
     },
@@ -56,7 +56,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'Menu Management',
         component: () => import(/* webpackChunkName: "menu" */ '@/views/system/menu.vue'),
         meta: {
-          title: 'Menu Management',
+          title: '菜单管理',
           hidden: false,
           breadcrumb: false
         }
@@ -66,7 +66,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'Role Management',
         component: () => import(/* webpackChunkName: "role" */ '@/views/system/role.vue'),
         meta: {
-          title: 'Role Management',
+          title: '角色管理',
           hidden: false
         }
       },
@@ -75,7 +75,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'User Management',
         component: () => import(/* webpackChunkName: "user" */ '@/views/system/user.vue'),
         meta: {
-          title: 'User Management'
+          title: '用户管理'
         }
       }
     ]
@@ -88,7 +88,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         path: 'https://www.chenhanpeng.com/',
         redirect: '/',
         meta: {
-          title: 'External link',
+          title: '外链',
           icon: 'link',
           hidden: false
         }
@@ -108,7 +108,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: 'Dashboard',
         component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
         meta: {
-          title: 'Dashboard',
+          title: '首页',
           icon: 'dashboard',
           affix: true // 固定显示在tagsView上
         }

@@ -8,8 +8,40 @@ export interface IUserInfo {
   password: string;
 }
 
+interface IRole {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface Profile {
+  id: number;
+  username: string;
+  mobile: string;
+  email: string;
+  avatar: string;
+  description: string;
+  isSuper: boolean;
+  status: boolean;
+  roles: IRole[];
+  roleIds?: number[];
+}
+
 export interface IUserState {
   token: string;
+  userInfo: Profile | null;
+  users: Profile[];
+  count: number;
+  roles: IRole[] | null;
+}
+
+// 查询User参数类型
+export interface IUserQuery {
+  pageNum?: number;
+  pageSize?: number;
+  username?: string;
+  mobile?: string;
+  status?: boolean;
 }
 
 type IMutations = MutationTree<IUserState>
@@ -17,7 +49,11 @@ type IMutations = MutationTree<IUserState>
 type IActions = ActionTree<IUserState, IRootState>
 
 const state: IUserState = {
-  token: ''
+  token: '',
+  userInfo: null,
+  users: [],
+  count: 0,
+  roles: null
 }
 
 const mutations: IMutations = {
