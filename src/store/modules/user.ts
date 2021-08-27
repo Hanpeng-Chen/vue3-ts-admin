@@ -1,4 +1,4 @@
-import { login } from '@/api/user'
+import { addUser, deleteUser, editUser, getUserInfo, getUsers, login } from '@/api/user'
 import { removeToken, setToken } from '@/utils/auth'
 import { ActionTree, Module, MutationTree } from 'vuex'
 import { IRootState } from '..'
@@ -44,6 +44,11 @@ export interface IUserQuery {
   status?: boolean;
 }
 
+export type IProfileQuery = Profile & {
+  pageNum?: number;
+  pageSize?: number;
+}
+
 type IMutations = MutationTree<IUserState>
 
 type IActions = ActionTree<IUserState, IRootState>
@@ -59,6 +64,18 @@ const state: IUserState = {
 const mutations: IMutations = {
   SET_TOKEN(state, token: string) {
     state.token = token
+  },
+  SET_USER_INFO(state, data: Profile) {
+    state.userInfo = data
+  },
+  SET_USERS(state, data: Profile[]) {
+    state.users = data
+  },
+  SET_COUNT(state, data: number) {
+    state.count = data
+  },
+  SET_ROLES(state, data: IRole[]) {
+    state.roles = data
   }
 }
 
@@ -90,6 +107,69 @@ const actions: IActions = {
       commit('SET_TOKEN', '')
       removeToken()
       resolve()
+    })
+  },
+  getAllUsers({ commit }, params: IUserQuery = {}) {
+    return new Promise<void>((resolve, reject) => {
+      getUsers(params).then(res => {
+        const { data } = res
+        commit('SET_USERS', data.users)
+        commit('SET_COUNT', data.count)
+        resolve()
+      }).catch(reject)
+    })
+  },
+  addUser({ dispatch }, data: IProfileQuery) {
+    return new Promise<void>((resolve, reject) => {
+      const { pageNum, pageSize, ...params } = data
+      addUser(params).then(res => {
+        if (res.code === 0) {
+          dispatch('getAllUsers', {
+            pageSize,
+            pageNum
+          })
+        }
+        resolve()
+      }).catch(reject)
+    })
+  },
+  editUser({ dispatch }, data: IProfileQuery) {
+    return new Promise<void>((resolve, reject) => {
+      const { pageNum, pageSize, ...params } = data
+      editUser(params.id, params).then(res => {
+        if (res.code === 0) {
+          dispatch('getAllUsers', {
+            pageSize,
+            pageNum
+          })
+        }
+        resolve()
+      }).catch(reject)
+    })
+  },
+  removeUser({ dispatch }, data: IProfileQuery) {
+    return new Promise<void>((resolve, reject) => {
+      const { pageNum, pageSize, id } = data
+      deleteUser(id).then(res => {
+        if (res.code === 0) {
+          dispatch('getAllUsers', {
+            pageNum,
+            pageSize
+          })
+        }
+        resolve()
+      }).catch(reject)
+    })
+  },
+  getUserInfo({ commit }) {
+    return new Promise((resolve, reject) => {
+      getUserInfo().then(res => {
+        const { data } = res
+        const { roles, ...info } = data
+        commit('SET_USER_INFO', info)
+        commit('SET_ROLES', roles)
+        resolve(roles)
+      }).catch(reject)
     })
   }
 }

@@ -81,14 +81,14 @@
 import { useStore } from '@/store'
 import { Profile } from '@/store/modules/user'
 import { ElForm } from 'element-plus'
-import { computed, defineComponent, reactive, ref } from 'vue'
+import { computed, defineComponent, getCurrentInstance, onMounted, reactive, ref } from 'vue'
 
 type ElFormInstance = InstanceType<typeof ElForm>
 
 export default defineComponent({
   name: 'User',
   setup() {
-    // const { proxy } = getCurrentInstance()
+    const { proxy } = getCurrentInstance()
     const store = useStore()
     const queryFormRef = ref<ElFormInstance | null>(null)
     const formQuery = reactive({
@@ -103,27 +103,54 @@ export default defineComponent({
     const pageNum = ref(0)
     const pageSize = ref(20)
 
-    // 查询
-    const handleSubmitQuery = () => {
-      console.log('查询')
-    }
-
-    // 重置
-    const handleResetFeilds = () => {
-      (queryFormRef.value as ElFormInstance).resetFields()
-    }
-
     // 格式化status
     const formatStatus = (row: Profile) => {
       return row.status ? '正常' : '禁用'
     }
 
+    const getUserList = () => {
+      store.dispatch('user/getAllUsers', {
+        pageNum: pageNum.value,
+        pageSize: pageSize.value,
+        ...formQuery
+      })
+    }
+
+    onMounted(() => {
+      getUserList()
+    })
+
+    // 查询
+    const handleSubmitQuery = () => {
+      getUserList()
+    }
+
+    // 重置
+    const handleResetFeilds = () => {
+      (queryFormRef.value as ElFormInstance).resetFields()
+      getUserList()
+    }
+
     // 分页
     const handleSizeChange = (val: number) => {
       pageSize.value = val
+      getUserList()
     }
     const handleCurrentChange = (val: number) => {
       pageNum.value = val - 1
+      getUserList()
+    }
+
+    // 新增、编辑、删除 统一派发方法
+    const dispatchAction = async(action: string, data: Partial<Profile>, message: string) => {
+      await store.dispatch(action, {
+        ...data,
+        pageNum: pageNum.value,
+        pageSize: pageSize.value
+      }).then(() => {
+        (queryFormRef.value as ElFormInstance).resetFields()
+        proxy?.$message.success(message)
+      })
     }
 
     // 编辑用户
@@ -133,7 +160,11 @@ export default defineComponent({
 
     // 删除用户
     const handleDeleteUser = (index: number, row: Profile) => {
-      console.log('删除用户', index, row)
+      proxy?.$confirm(`您确认要删除用户${row.username}吗？`, '确认删除', {
+        type: 'warning'
+      }).then(async () => {
+        await dispatchAction
+      })
     }
     return {
       formQuery,
