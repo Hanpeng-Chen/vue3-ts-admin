@@ -66,14 +66,20 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
           :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>
     </div>
+    <right-panel v-model="panelVisible" :title="panelTitle" :size="330">
+      <edit-user
+        :type="editType"
+        :data="editData"
+        @submit="handleSubmitUser"
+      />
+    </right-panel>
   </div>
 </template>
 
@@ -82,13 +88,19 @@ import { useStore } from '@/store'
 import { Profile } from '@/store/modules/user'
 import { ElForm } from 'element-plus'
 import { computed, defineComponent, getCurrentInstance, onMounted, reactive, ref } from 'vue'
+import RightPanel from '@/components/RightPanel/index.vue'
+import EditUser from './components/editUser.vue'
 
 type ElFormInstance = InstanceType<typeof ElForm>
 
 export default defineComponent({
   name: 'User',
+  components: {
+    RightPanel,
+    EditUser
+  },
   setup() {
-    const { proxy } = getCurrentInstance()
+    const { proxy } = getCurrentInstance()!
     const store = useStore()
     const queryFormRef = ref<ElFormInstance | null>(null)
     const formQuery = reactive({
@@ -103,6 +115,14 @@ export default defineComponent({
     const pageNum = ref(0)
     const pageSize = ref(20)
 
+    // 用户新增/编辑数据
+    const editData = ref<Profile | undefined>(undefined)
+    // 控制面板显示
+    const panelVisible = ref(false)
+    // 操作类型 0-新增  1-编辑
+    const editType = ref(0)
+    const panelTitle = computed(() => editType.value === 0 ? '新增用户' : '编辑用户')
+
     // 格式化status
     const formatStatus = (row: Profile) => {
       return row.status ? '正常' : '禁用'
@@ -111,8 +131,8 @@ export default defineComponent({
     const getUserList = () => {
       store.dispatch('user/getAllUsers', {
         pageNum: pageNum.value,
-        pageSize: pageSize.value,
-        ...formQuery
+        pageSize: pageSize.value
+        // ...formQuery
       })
     }
 
@@ -153,9 +173,38 @@ export default defineComponent({
       })
     }
 
+    // 新增用户
+    const addUser = (data: Profile) => {
+      dispatchAction('user/addUser', data, '用户添加成功')
+    }
+
+    // 编辑用户
+    const editUser = (data: Profile) => {
+      dispatchAction('user/editUser', data, '编辑用户成功')
+    }
+
+    // 新增用户
+    const handleAddUser = () => {
+      editType.value = 0
+      editData.value = {} as Profile
+      editData.value.roleIds = []
+      panelVisible.value = true
+    }
+
     // 编辑用户
     const handleEditUser = (index: number, row: Profile) => {
-      console.log('编辑用户', index, row)
+      editType.value = 1
+      editData.value = { ...row }
+      editData.value.roleIds = []
+      panelVisible.value = true
+    }
+
+    const handleSubmitUser = (data: Profile) => {
+      if (editType.value === 0) {
+        addUser(data)
+      } else {
+        editUser(data)
+      }
     }
 
     // 删除用户
@@ -163,7 +212,15 @@ export default defineComponent({
       proxy?.$confirm(`您确认要删除用户${row.username}吗？`, '确认删除', {
         type: 'warning'
       }).then(async () => {
-        await dispatchAction
+        await dispatchAction('user/removeUser', {
+          id: row.id
+        }, '用户删除成功')
+      }).catch((err: Error) => {
+        console.log(err)
+        proxy?.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
     return {
@@ -173,13 +230,19 @@ export default defineComponent({
       total,
       pageNum,
       pageSize,
+      panelVisible,
+      panelTitle,
+      editType,
+      editData,
       formatStatus,
       handleSubmitQuery,
       handleResetFeilds,
       handleSizeChange,
       handleCurrentChange,
+      handleAddUser,
       handleEditUser,
-      handleDeleteUser
+      handleDeleteUser,
+      handleSubmitUser
     }
   }
 })

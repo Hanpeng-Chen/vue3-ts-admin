@@ -14,14 +14,8 @@ request.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
-}, (error: AxiosError) => {
-  const res = error?.response
-  if (res && res.status === 401) {
-    store.dispatch('user/resetToken').then(() => {
-      window.location.reload()
-    })
-  }
-  ElMessage.error(error.message)
+}, error => {
+  console.log(error)
   return Promise.reject(error)
 })
 
@@ -32,8 +26,14 @@ request.interceptors.response.use(response => {
     return Promise.reject(message)
   }
   return response.data
-}, error => {
-  console.log('err' + error)
+}, (error: AxiosError) => {
+  const res = error?.response
+  if (res && res.status === 401) {
+    store.dispatch('user/resetToken').then(() => {
+      // window.location.reload()
+    })
+  }
+  ElMessage.error(error.message)
   return Promise.reject(error)
 })
 

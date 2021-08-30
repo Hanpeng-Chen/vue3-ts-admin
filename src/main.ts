@@ -9,6 +9,9 @@ import initSvgIcon from '@/icons/index'
 
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 
+// 用户验证
+import './permission'
+
 const app = createApp(App)
 
 const size = store.getters.size
