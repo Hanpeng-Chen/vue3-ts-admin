@@ -87,13 +87,13 @@ export default defineComponent({
 
     const editFormRules = {
       username: {
-        require: true,
+        required: true,
         message: '请输入用户名',
         trigger: 'blur'
       },
       mobile: [
         {
-          require: true,
+          required: true,
           message: '请输入手机号',
           trigger: 'blur'
         },
