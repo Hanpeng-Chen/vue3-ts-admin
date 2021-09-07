@@ -86,12 +86,34 @@ export default defineComponent({
       pageSize.value = val
     }
 
+    // 添加角色
+    const handleAddRole = () => {
+      console.log('添加角色')
+    }
+
+    // 编辑角色
+    // const handleEditRole = (row: any) => {
+    //   console.log('编辑角色', row)
+    // }
+
+    // const handleRoleMenu = (index: number, row: any) => {
+    //   console.log('分配菜单角色', row, index)
+    // }
+
+    // const handleDeleteRole = (row: any) => {
+    //   console.log('删除角色', row)
+    // }
+
     return {
       roles,
       pageNum,
       pageSize,
       handleSizeChange,
-      handleCurrentChange
+      handleCurrentChange,
+      handleAddRole
+      // handleEditRole,
+      // handleRoleMenu,
+      // handleDeleteRole
     }
   }
 })

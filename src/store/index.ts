@@ -6,12 +6,14 @@ import { InjectionKey } from 'vue'
 import tagsView, { ITagsViewState } from '@/store/modules/tagsView'
 import settings, { ISettingsState } from './modules/settings'
 import user, { IUserState } from './modules/user'
+import role, { IRoleState } from './modules/role'
 
 export interface IRootState {
   app: IAppState,
   user: IUserState,
   tagsView: ITagsViewState,
-  settings: ISettingsState
+  settings: ISettingsState,
+  role: IRoleState
 }
 
 // eslint-disable-next-line symbol-description
@@ -40,7 +42,8 @@ export default createStore({
     app,
     user,
     tagsView,
-    settings
+    settings,
+    role
   }
 })
 

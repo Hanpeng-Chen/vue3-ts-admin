@@ -131,8 +131,8 @@ export default defineComponent({
     const getUserList = () => {
       store.dispatch('user/getAllUsers', {
         pageNum: pageNum.value,
-        pageSize: pageSize.value
-        // ...formQuery
+        pageSize: pageSize.value,
+        ...formQuery
       })
     }
 
@@ -170,6 +170,7 @@ export default defineComponent({
       }).then(() => {
         (queryFormRef.value as ElFormInstance).resetFields()
         proxy?.$message.success(message)
+        panelVisible.value = false
       })
     }
 
