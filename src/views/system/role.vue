@@ -66,18 +66,58 @@
         ></el-pagination>
       </div>
     </div>
+    <right-panel v-model="panelVisible" :title="panelTitle" :size="330">
+      <edit-role
+        :type="editType"
+        :data="editData"
+        @submit="handleSubmitRole"
+      ></edit-role>
+    </right-panel>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, getCurrentInstance, onMounted, ref, watchEffect } from 'vue'
+import EditRole from './components/editRole.vue'
+import RightPanel from '@/components/RightPanel/index.vue'
+import { useStore } from '@/store'
+import { IRole } from '@/store/modules/role'
 
 export default defineComponent({
   name: 'Role',
+  components: {
+    EditRole,
+    RightPanel
+  },
   setup() {
-    const roles = {}
+    const { proxy } = getCurrentInstance()!
+    const store = useStore()
+    const roles = computed(() => store.state.role.roles)
+    const total = computed(() => store.state.role.count)
     const pageNum = ref(0)
     const pageSize = ref(10)
+    const editData = ref<IRole | undefined>(undefined)
+    const panelVisible = ref(false)
+    const editType = ref(1) // 1-编辑 0-新增
+
+    const panelTitle = computed(() => editType.value === 1 ? '编辑角色' : '新增角色')
+
+    // 获取角色列表
+    const getRoleList = () => {
+      store.dispatch('role/getRoles', {
+        pageNum: pageNum.value,
+        pageSize: pageSize.value
+      })
+    }
+
+    onMounted(() => {
+      // 获取全部菜单
+    })
+
+    // 自动追踪相关依赖属性变动获取数据
+    watchEffect(() => {
+      getRoleList()
+    })
 
     const handleCurrentChange = (val: number) => {
       pageNum.value = val - 1
@@ -88,32 +128,89 @@ export default defineComponent({
 
     // 添加角色
     const handleAddRole = () => {
-      console.log('添加角色')
+      editType.value = 0
+      editData.value = {} as IRole
+      panelVisible.value = true
     }
 
     // 编辑角色
-    // const handleEditRole = (row: any) => {
-    //   console.log('编辑角色', row)
-    // }
+    const handleEditRole = (row: IRole) => {
+      editType.value = 1
+      editData.value = { ...row }
+      panelVisible.value = true
+    }
 
-    // const handleRoleMenu = (index: number, row: any) => {
-    //   console.log('分配菜单角色', row, index)
-    // }
+    const handleRoleMenu = (index: number, row: IRole) => {
+      console.log('分配菜单角色', row, index)
+    }
 
-    // const handleDeleteRole = (row: any) => {
-    //   console.log('删除角色', row)
-    // }
+    const handleDeleteRole = (row: IRole) => {
+      proxy?.$confirm(`您确认要删除角色${row.name}吗？`, '删除确认', {
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('role/deleteRole', {
+          id: row.id,
+          pageSize: pageSize.value,
+          pageNum: pageNum.value
+        }).then(() => {
+          proxy?.$message.success('角色删除成功')
+        })
+      }).catch(() => {
+        proxy?.$message({
+          type: 'info',
+          message: '删除已取消'
+        })
+      })
+    }
+
+    const dispatchAction = (action: string, data: IRole, message: string) => {
+      store.dispatch(action, {
+        ...data,
+        pageNum: pageNum.value,
+        pageSize: pageSize.value
+      }).then(() => {
+        proxy?.$message.success(message)
+        panelVisible.value = false
+      })
+    }
+
+    const addNewRole = (data: IRole) => {
+      dispatchAction('role/addRole', data, '角色添加成功')
+    }
+
+    const editRole = (data: IRole) => {
+      dispatchAction('role/editRole', data, '角色编辑成功')
+    }
+
+    const handleSubmitRole = (data: IRole) => {
+      if (editType.value === 1) {
+        editRole(data)
+      } else {
+        addNewRole(data)
+      }
+    }
+
+    const formatterIsDefault = (row: IRole) => {
+      return row.is_default ? '是' : '否'
+    }
 
     return {
       roles,
       pageNum,
       pageSize,
+      total,
+      editType,
+      editData,
+      panelVisible,
+      panelTitle,
+      formatterIsDefault,
       handleSizeChange,
       handleCurrentChange,
-      handleAddRole
-      // handleEditRole,
-      // handleRoleMenu,
-      // handleDeleteRole
+      handleAddRole,
+      handleEditRole,
+      handleRoleMenu,
+      handleDeleteRole,
+      handleSubmitRole
     }
   }
 })

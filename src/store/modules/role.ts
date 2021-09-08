@@ -2,10 +2,11 @@ import { addRole, deleteRole, editRole, getRoles, RoleParams } from '@/api/role'
 import { ActionTree, Module, MutationTree } from 'vuex'
 import { IRootState } from '..'
 
+/* eslint-disable camelcase */
 export interface IRoleAccess {
   id: number;
-  // role_id: number;
-  // access_id: number;
+  role_id: number;
+  access_id: number;
 }
 
 export type IRoleAccessList = IRoleAccess[]
@@ -14,7 +15,7 @@ export interface IRole {
   id: number;
   name: string;
   description: string;
-  // is_default: boolean;
+  is_default: boolean;
   createAt: string;
   updateAt: string;
 }
