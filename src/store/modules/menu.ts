@@ -11,8 +11,8 @@ export interface MenuData {
   path: string;
   name: string;
   icon: string;
-  parent_id: string;
-  sort_id: string;
+  parent_id: number | string;
+  sort_id: number;
 }
 
 export interface ITreeItemData extends MenuData {
