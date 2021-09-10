@@ -7,7 +7,8 @@ const getters: GetterTree<IRootState, IRootState> = {
   themeColor: (state) => state.settings.theme,
   roles: (state) => state.user.roles,
   roleIds: state => (state.user.roles || []).map(role => role.id),
-  roleNames: state => (state.user.roles || []).map(role => role.name)
+  roleNames: state => (state.user.roles || []).map(role => role.name),
+  menusTree: state => state.menu.menuTreeData
 }
 
 export default getters

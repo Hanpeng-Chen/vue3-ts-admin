@@ -7,13 +7,15 @@ import tagsView, { ITagsViewState } from '@/store/modules/tagsView'
 import settings, { ISettingsState } from './modules/settings'
 import user, { IUserState } from './modules/user'
 import role, { IRoleState } from './modules/role'
+import menu, { IMenuState } from './modules/menu'
 
 export interface IRootState {
   app: IAppState,
   user: IUserState,
   tagsView: ITagsViewState,
   settings: ISettingsState,
-  role: IRoleState
+  role: IRoleState,
+  menu: IMenuState
 }
 
 // eslint-disable-next-line symbol-description
@@ -43,7 +45,8 @@ export default createStore({
     user,
     tagsView,
     settings,
-    role
+    role,
+    menu
   }
 })
 

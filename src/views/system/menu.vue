@@ -85,11 +85,11 @@
 import { useStore } from '@/store'
 import { ITreeItemData, MenuData } from '@/store/modules/menu'
 import { ElForm, ElTree } from 'element-plus'
-import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import EditMenu from './components/editMenu.vue'
 import RightPanel from '@/components/RightPanel/index.vue'
 import { useReloadPage } from '@/hooks/useReload'
-import { addNewMenu } from '@/api/menu'
+import { addNewMenu, deleteMenuById, updateBulkMenu } from '@/api/menu'
 
 interface ITreeNode {
   id: number;
@@ -115,6 +115,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
+    const { proxy } = getCurrentInstance()!
     const menuTreeRef = ref<IMenuTree | null>(null)
     const treeData = computed(() => store.getters.menusTree)
     const menus = ref<ITreeItemData[]>([])
@@ -178,14 +179,45 @@ export default defineComponent({
       }
     }
 
+    // 重置添加菜单状态
+    const resetStatus = () => {
+      panelVisible.value = false
+      menuFormRef.value?.resetFields()
+      parentData.value = null
+    }
+
+    // 分配sortId
+    const getMenuNodeSortId = (list: ITreeItemData[]) => {
+      if (list && list.length > 0) {
+        return list[list.length - 1].sort_id + 1
+      }
+      return 0
+    }
+
     // 添加顶级菜单
     const handleCreateRootMenu = () => {
       menuType.value = 0
       panelVisible.value = true
     }
+    // 顶级菜单分配parent_id和sort_id
+    const allocRootMenuId = (data: IMenuItemNotID) => {
+      const sortId = getMenuNodeSortId(menus.value)
+      data.sort_id = sortId
+      data.parent_id = '0'
+    }
+    // 将顶级菜单添加到菜单树种
+    const appendRootMenu = (id: number, data: IMenuItemNotID) => {
+      const node = { id, ...data, children: [] }
+      menus.value.push(node)
+      menus.value = [...menus.value]
+    }
     const handleAddRootMenu = async (data: IMenuItemNotID) => {
+      allocRootMenuId(data)
       await addNewMenu(data).then(res => {
         if (res.code === 0) {
+          const { id } = res.data
+          appendRootMenu(id, data)
+          proxy?.$message.success('顶级菜单创建成功')
           reloadPage()
         }
       })
@@ -193,13 +225,31 @@ export default defineComponent({
 
     // 添加子菜单
     const parentData = ref<ITreeItemData | null>(null) // 缓存父菜单的数据
+    const allocChildMenuId = (data: IMenuItemNotID, parentData: ITreeItemData): IMenuItemNotID => {
+      const pid = parentData.id as number
+      let sortId = 0
+      if (!parentData.children) {
+        parentData.children = []
+      }
+      if (parentData.children.length > 0) {
+        sortId = getMenuNodeSortId(parentData.children)
+      }
+      data.sort_id = sortId
+      data.parent_id = pid
+      return data
+    }
+    const appendChildMenu = (child: ITreeItemData, parentData: ITreeItemData) => {
+      (parentData.children!).push(child)
+      menus.value = [...menus.value]
+    }
     const handleAddChildMenu = async (data: IMenuItemNotID) => {
-      // const child = allocC
+      const child = allocChildMenuId(data, parentData.value!)
       await addNewMenu(data).then(res => {
         if (res.code === 0) {
           const { id } = res.data
-          console.log('id', id)
-          // TODO: 将新增的子菜单添加到树中，新增提示
+          ;(child as ITreeItemData).id = id
+          appendChildMenu(child as ITreeItemData, parentData.value!)
+          proxy?.$message.success('子菜单创建成功')
           reloadPage()
         }
       })
@@ -224,6 +274,73 @@ export default defineComponent({
           } else if (menuType.value === 1) {
             await handleAddChildMenu({ ...menuFormData })
           }
+          resetStatus()
+        }
+      })
+    }
+
+    // 移除节点
+    const removeNode = (node: ITreeNode, childId: number) => {
+      const parent = node.parent
+      const children = parent.data.children || parent.data
+      const index = children.findIndex(d => d.id === childId)
+      children.splice(index, 1)
+      menus.value = [...menus.value]
+    }
+
+    const handleRemoveMenu = (node: ITreeNode, menuData: ITreeItemData) => {
+      proxy?.$confirm(`您确认要删除菜单${menuData.title}？`, '确认删除', {
+        type: 'warning'
+      }).then(() => {
+        deleteMenuById(menuData.id).then(res => {
+          if (res.code === 0) {
+            proxy?.$message.success('删除成功')
+            removeNode(node, menuData.id)
+            // 如果删除的是正在编辑的菜单，重置编辑表单
+            if (editData.value && menuData.id === editData.value.id) {
+              editData.value = null
+            }
+            reloadPage()
+          }
+        })
+      }).catch(() => {
+        proxy?.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    }
+
+    // 拖拽排序
+    // 拖拽一级节点
+    const allowDrag = (draggingNode: ITreeNode) => {
+      const data = draggingNode.data
+      return data.parent_id === 0 || data.parent_id == null
+    }
+
+    // 拖放一级节点
+    type DropType = 'before' | 'after' | 'inner'
+    const allowDrop = (draggingNode: ITreeNode, dropNode: ITreeNode, type: DropType) => {
+      if (dropNode.data.parent_id === 0 || dropNode.data.parent_id == null) {
+        return type !== 'inner'
+      }
+    }
+
+    // 拖放完成事件
+    const handleNodeDrop = () => {
+      menus.value.forEach((menu, index) => {
+        menu.sort_id = index
+      })
+
+      // 批量更新菜单sort_id
+      const menuList = menus.value.map(menu => {
+        const temp = { ...menu }
+        delete menu.children
+        return temp
+      })
+      updateBulkMenu(menuList).then(res => {
+        if (res.code === 0) {
+          store.dispatch('permission/generateRoutes', 1)
         }
       })
     }
@@ -241,7 +358,11 @@ export default defineComponent({
       handleCreateRootMenu,
       handleCreateChildMenu,
       handleNodeClick,
-      submitMenuForm
+      submitMenuForm,
+      handleRemoveMenu,
+      allowDrag,
+      allowDrop,
+      handleNodeDrop
     }
   }
 })
@@ -251,5 +372,33 @@ export default defineComponent({
 .menu-container {
   display: flex;
   justify-content: space-between;
+  padding: 20px;
+  .menu-tree {
+    height: 400px;
+    overflow-y: scroll;
+  }
+  .tree-card {
+    min-width: 500px;
+    padding-bottom: 30px;
+  }
+  .edit-card {
+    flex: 1;
+    margin-left: 20px;
+  }
+  >>> .el-form-item__content {
+    min-width: 220px;
+  }
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
+  .menu-form {
+    padding: 20px 10px 20px 0;
+    box-sizing: border-box;
+  }
 }
 </style>

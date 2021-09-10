@@ -1,4 +1,5 @@
 import { getAllMenus } from '@/api/menu'
+import { getAccessByRoles } from '@/api/roleAccess'
 import generateMenuTree from '@/utils/generateMenuTree'
 import generateTree from '@/utils/generateTree'
 import { ActionTree, Module, MutationTree } from 'vuex'
@@ -78,6 +79,16 @@ const actions: IActions = {
         dispatch('generateAuthTreeData', [...data])
         commit('SET_AUTH_MENU_LIST', data)
         resolve([...data])
+      }).catch(reject)
+    })
+  },
+  getAccessByRoles({ dispatch, commit }, roles: number[]) {
+    return new Promise<MenuData[]>((resolve, reject) => {
+      getAccessByRoles(roles).then(res => {
+        const { access } = res.data
+        dispatch('generateAuthTreeData', [...access])
+        commit('SET_AUTH_MENU_LIST', access)
+        resolve([...access])
       }).catch(reject)
     })
   }
