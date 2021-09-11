@@ -8,6 +8,7 @@ import settings, { ISettingsState } from './modules/settings'
 import user, { IUserState } from './modules/user'
 import role, { IRoleState } from './modules/role'
 import menu, { IMenuState } from './modules/menu'
+import permission, { IPermissionState } from './modules/permission'
 
 export interface IRootState {
   app: IAppState,
@@ -15,7 +16,8 @@ export interface IRootState {
   tagsView: ITagsViewState,
   settings: ISettingsState,
   role: IRoleState,
-  menu: IMenuState
+  menu: IMenuState,
+  permission: IPermissionState
 }
 
 // eslint-disable-next-line symbol-description
@@ -46,7 +48,8 @@ export default createStore({
     tagsView,
     settings,
     role,
-    menu
+    menu,
+    permission
   }
 })
 
