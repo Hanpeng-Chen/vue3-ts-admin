@@ -4,13 +4,12 @@ import router from './router'
 import store, { key } from './store'
 import 'normalize.css/normalize.css'
 import installElementPlus, { Size } from './plugins/element'
+// 用户验证
+import './permission'
 import '@/styles/index.scss'
 import initSvgIcon from '@/icons/index'
 
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
-
-// 用户验证
-import './permission'
 
 const app = createApp(App)
 

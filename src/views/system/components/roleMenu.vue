@@ -44,9 +44,9 @@ export default defineComponent({
       type: Object as PropType<IRole>,
       required: true
     }
-  }
+  },
   setup(props, { emit }) {
-    const { proxy } = getCurrentInstance()
+    const { proxy } = getCurrentInstance()!
     const store = useStore()
     const menuTree = ref<ElTreeInstance | null>(null)
     const role = props.role as IRole
@@ -57,7 +57,7 @@ export default defineComponent({
     })
     const checkStrictly = ref(false)
     const dialogTitle = computed(() => `分配 ${role.name} 菜单权限`)
-    const treeData = computed(() => store.getters.menuTree)
+    const treeData = computed(() => store.getters.menusTree)
     watch(dialogVisible, (value) => {
       emit('update:modelValue', value)
     })
@@ -135,6 +135,8 @@ export default defineComponent({
       dialogTitle,
       treeData,
       defaultProps,
+      checkStrictly,
+      menuTree,
       handleSubmit,
       handleCheckAll
     }

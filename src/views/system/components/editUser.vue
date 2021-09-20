@@ -15,8 +15,29 @@
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="editData.email" placeholder="请输入邮箱地址"></el-input>
       </el-form-item>
+      <el-form-item label="初始密码" prop="password" v-if="type === 0">
+        <el-input
+          v-model="editData.password"
+          placeholder="请设置初始密码"
+          show-password
+        ></el-input>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-switch v-model="editData.status"></el-switch>
+      </el-form-item>
+      <el-form-item label="角色分配" prop="roleIds">
+        <el-select
+          v-model="editData.roleIds"
+          multiple
+          placeholder="请选择角色"
+        >
+          <el-option
+            v-for="item in editData.roles"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="说明" prop="description">
         <el-input
@@ -115,6 +136,13 @@ export default defineComponent({
           trigger: ['blur', 'change']
         }
       ],
+      password: [
+        {
+          required: true,
+          message: '请设置用户初始密码',
+          trigger: 'blur'
+        }
+      ],
       roleIds: {
         required: true,
         message: '请至少选择一个角色',
@@ -125,6 +153,7 @@ export default defineComponent({
 
     const defaultProps = {
       username: '',
+      password: '',
       mobile: '',
       email: '',
       status: true,

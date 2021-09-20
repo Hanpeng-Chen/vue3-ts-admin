@@ -27,7 +27,8 @@ import {
   ElTableColumn,
   ElPagination,
   ElCard,
-  ElTree
+  ElTree,
+  ElDialog
 } from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
@@ -72,7 +73,8 @@ export default (app: App, options: ElementOptions): void => {
     ElTableColumn,
     ElPagination,
     ElCard,
-    ElTree
+    ElTree,
+    ElDialog
   ]
 
   components.forEach(component => {

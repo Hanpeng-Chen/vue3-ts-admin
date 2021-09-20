@@ -17,6 +17,7 @@ interface IRole {
 export interface Profile {
   id: number;
   username: string;
+  password: string;
   mobile: string;
   email: string;
   avatar: string;

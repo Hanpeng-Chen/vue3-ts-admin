@@ -35,6 +35,17 @@
           label="邮箱"
         ></el-table-column>
         <el-table-column
+          label="角色名称"
+        >
+          <template #default="scope">
+            <span
+              style="margin-left:5px"
+              v-for="role in scope.row.roles"
+              :key="role.id"
+            >{{role.name}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="status"
           label="状态"
           :formatter="formatStatus"
@@ -123,6 +134,10 @@ export default defineComponent({
     const editType = ref(0)
     const panelTitle = computed(() => editType.value === 0 ? '新增用户' : '编辑用户')
 
+    store.dispatch('role/getRoles')
+
+    const roles = computed(() => store.state.role.roles)
+
     // 格式化status
     const formatStatus = (row: Profile) => {
       return row.status ? '正常' : '禁用'
@@ -188,6 +203,7 @@ export default defineComponent({
     const handleAddUser = () => {
       editType.value = 0
       editData.value = {} as Profile
+      editData.value.roles = roles.value
       editData.value.roleIds = []
       panelVisible.value = true
     }
@@ -196,7 +212,8 @@ export default defineComponent({
     const handleEditUser = (index: number, row: Profile) => {
       editType.value = 1
       editData.value = { ...row }
-      editData.value.roleIds = []
+      editData.value.roles = roles.value
+      editData.value.roleIds = row.roles.map(item => item.id)
       panelVisible.value = true
     }
 

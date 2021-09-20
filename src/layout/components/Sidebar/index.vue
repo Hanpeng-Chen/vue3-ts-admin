@@ -53,7 +53,10 @@ export default defineComponent({
     })
     const scssVariables = computed(() => variables)
     const isCollapse = computed(() => !store.getters.sidebar.opened)
-    const menuRoutes = computed(() => routes)
+
+    // 获取权限菜单
+    const menuList = computed(() => store.state.menu.authMenuTreeData)
+    const menuRoutes = computed(() => [...menuList.value])
 
     const themeColor = computed(() => store.getters.themeColor)
     const showLogo = computed(() => store.state.settings.sidebarLogo)

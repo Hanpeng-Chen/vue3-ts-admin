@@ -73,6 +73,11 @@
         @submit="handleSubmitRole"
       ></edit-role>
     </right-panel>
+    <role-menu
+      v-if="roleData && roleMenuVisible"
+      v-model="roleMenuVisible"
+      :role="roleData"
+    ></role-menu>
   </div>
 </template>
 
@@ -80,6 +85,7 @@
 import { computed, defineComponent, getCurrentInstance, onMounted, ref, watchEffect } from 'vue'
 import EditRole from './components/editRole.vue'
 import RightPanel from '@/components/RightPanel/index.vue'
+import RoleMenu from './components/roleMenu.vue'
 import { useStore } from '@/store'
 import { IRole } from '@/store/modules/role'
 
@@ -87,7 +93,8 @@ export default defineComponent({
   name: 'Role',
   components: {
     EditRole,
-    RightPanel
+    RightPanel,
+    RoleMenu
   },
   setup() {
     const { proxy } = getCurrentInstance()!
@@ -111,7 +118,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      // 获取全部菜单
+      store.dispatch('menu/getAllMenuList')
     })
 
     // 自动追踪相关依赖属性变动获取数据
@@ -138,10 +145,6 @@ export default defineComponent({
       editType.value = 1
       editData.value = { ...row }
       panelVisible.value = true
-    }
-
-    const handleRoleMenu = (index: number, row: IRole) => {
-      console.log('分配菜单角色', row, index)
     }
 
     const handleDeleteRole = (row: IRole) => {
@@ -194,6 +197,14 @@ export default defineComponent({
       return row.is_default ? '是' : '否'
     }
 
+    // 权限菜单
+    const roleMenuVisible = ref(false)
+    const roleData = ref<IRole | null>(null)
+    const handleRoleMenu = (index: number, row: IRole) => {
+      roleData.value = row
+      roleMenuVisible.value = true
+    }
+
     return {
       roles,
       pageNum,
@@ -203,6 +214,8 @@ export default defineComponent({
       editData,
       panelVisible,
       panelTitle,
+      roleData,
+      roleMenuVisible,
       formatterIsDefault,
       handleSizeChange,
       handleCurrentChange,
