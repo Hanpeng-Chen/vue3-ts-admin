@@ -2,7 +2,7 @@
   <div>
     <h1>dashboard page</h1>
     <svg-icon icon-class="bug"></svg-icon>
-    <el-button @click="handleClick">按钮</el-button>
+    <el-button @click="handleClick" v-permission="['super_admin']">按钮</el-button>
   </div>
 </template>
 

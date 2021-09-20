@@ -9,6 +9,8 @@ import './permission'
 import '@/styles/index.scss'
 import initSvgIcon from '@/icons/index'
 
+// 权限指令
+import permissionDirective from './directive/permission/index'
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 
 const app = createApp(App)
@@ -20,6 +22,7 @@ app.use(store, key)
   .use(installElementPlus, {
     size
   })
+  .use(permissionDirective)
   .use(initSvgIcon)
   .mount('#app')
 
